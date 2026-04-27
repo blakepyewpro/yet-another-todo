@@ -76,6 +76,12 @@ div#display {
   display: grid;
   grid-template-columns: 1fr 5fr;
   gap: 0.5rem;
+
+  transition: grid-template-columns 0.3s ease-out;
+}
+
+div#display.hidden {
+  grid-template-columns: 0fr 1fr;
 }
 
 div#menu-area {
@@ -89,6 +95,17 @@ div#menu-area {
 
   display: flex;
   flex-direction: column;
+}
+
+div#display.hidden div#menu-area {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  box-shadow: 0;
+}
+
+div#display.hidden div#menu-area > * {
+  display: none;
 }
 
 div#menu-area ul {
