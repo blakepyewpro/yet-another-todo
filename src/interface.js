@@ -14,6 +14,10 @@ export default class UI {
       } else {
         displayArea.classList.add("hidden");
       }
+    });
+
+    createBtn.addEventListener("click", () => {
+      
     })
   }
 }
