@@ -1,4 +1,4 @@
-/* https: //lospec.com/palette-list/grayscale-16 */
+/* https://lospec.com/palette-list/grayscale-16 */
 
 @font-face {
   font-family: "Roboto";
@@ -81,6 +81,7 @@ span#title {
 
 span#yet {
   font-size: 0.75rem;
+  color: #646464;
 }
 
 span#another {
@@ -189,4 +190,38 @@ div#placeholder {
 span#ph-title {
   font-size: 1.5rem;
   color: black;
+}
+
+dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  padding: 0.25rem 0.5rem;
+
+  background-color: white;
+  border: 1px solid #e7e7e7;
+  border-radius: 0.5rem;
+  box-shadow: .25rem .25rem .25rem rgba(0, 0, 0, 20%);
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 20%);
+  backdrop-filter: blur(2px);
+}
+
+#dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  gap: 0.5rem;
 }
