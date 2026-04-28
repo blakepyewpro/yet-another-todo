@@ -32,8 +32,9 @@ export default class UI {
     const nameDiv = UI.getNameDiv();
     const notesDiv = UI.getNotesDiv();
     const dateDiv = UI.getDateDiv();
+    const btnDiv = UI.getButtonsDiv();
 
-    form.append(nameDiv, notesDiv, dateDiv);
+    form.append(nameDiv, notesDiv, dateDiv, btnDiv);
 
   }
 
@@ -57,8 +58,7 @@ export default class UI {
     const notesLabel = document.createElement("label");
     notesLabel.setAttribute("for", "notes");
     notesLabel.innerText = "NOTES";
-    const notesField = document.createElement("input");
-    notesField.setAttribute("type", "text");
+    const notesField = document.createElement("textarea");
     notesField.setAttribute("name", "notes");
     notesDiv.append(notesLabel, notesField);
 
@@ -83,7 +83,37 @@ export default class UI {
     return dateDiv;
   }
 
-  static getProjectDiv() {
+  static getProjectDiv(projectNames) {
     //TODO
+  }
+
+  static getButtonsDiv() {
+    const btnDiv = document.createElement("div");
+    btnDiv.id = "form-btns"
+    const saveBtn = document.createElement("button");
+    saveBtn.id = "save-btn";
+    saveBtn.innerText = "Save";
+    const cancelBtn = document.createElement("button");
+    cancelBtn.id = "cancel-btn";
+    cancelBtn.innerText = "Cancel";
+    btnDiv.append(saveBtn, cancelBtn);
+
+    saveBtn.addEventListener("click", () => {
+      const dialog = document.querySelector("dialog");
+      const form = document.querySelector("form");
+
+      dialog.close();
+      form.replaceChildren();
+    });
+    
+    cancelBtn.addEventListener("click", () => {
+      const dialog = document.querySelector("dialog");
+      const form = document.querySelector("form");
+
+      dialog.close();
+      form.replaceChildren();
+    });
+
+    return btnDiv;
   }
 }
