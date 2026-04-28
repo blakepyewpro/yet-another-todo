@@ -23,11 +23,11 @@ export class MasterList {
 }
 
 export class Project {
-  constructor(name, dueDate, items) {
+  constructor(name, dueDate, items, isDefault = false) {
     this.itemType = "project";
     this.name = name;
-    this.dueDate = dueDate;
     this.items = items;
+    isDefault = isDefault;
   }
 
   sortByDueDate() {
@@ -36,11 +36,11 @@ export class Project {
 }
 
 export class Task {
-  constructor(name, description, dueDate) {
-    this.itemType = "project";
+  constructor(name, description, dueDate, isComplete = false) {
+    this.itemType = "task";
     this.name = name;
     this.description = description;
     this.dueDate = dueDate;
-    this.itemType = "task";
+    this.isComplete = isComplete;
   }
 }
