@@ -49,7 +49,7 @@ header {
   font-size: 2rem;
 }
 
-header button {
+button {
   padding: 0.25rem;
   font-size: 1rem;
 
@@ -69,9 +69,13 @@ button img{
   width: 3ch;
 }
 
-header button:hover {
+button:hover {
   transform: translateY(-0.25rem);
   box-shadow: .25rem .25rem .25rem rgba(0, 0, 0, 20%);
+}
+
+button:active {
+  background-color: #d1d1d1;
 }
 
 span#title {
@@ -150,7 +154,12 @@ div#menu-area ul {
 div#menu-area ul li {
   transition: all 0.3s ease
 }
-div#menu-area ul li:hover {
+
+li span {
+  transition: all 0.3s ease
+}
+
+div#menu-area ul li:hover, li:hover span {
   transform: translateY(-0.25rem);
   text-shadow: 4px 4px 2px rgba(0, 0, 0, 20%);
   color: black;
@@ -215,13 +224,55 @@ dialog::backdrop {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.5rem;
 }
 
-fieldset {
-  border: 0;
-  padding: 0;
-  margin: 0;
+#dialog-title {
+  color: black;
+  font-size: 1.5rem;
+}
 
+form {
   display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+dialog button {
+  width: 8ch;
+}
+
+#form-toggles {
+  display: flex;
+  gap: 0.5em;
+}
+
+.form-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+label {
+  font-size: 0.75rem;
+  width: 9ch;
+}
+
+.form-input input, textarea {
+  flex-grow: 1;
+}
+
+textarea {
+  resize: none;
+  height: 3em;
+  min-width: 30ch;
+
+  font-size: 0.75em;
+}
+
+#form-btns {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 0.5rem;
 }
