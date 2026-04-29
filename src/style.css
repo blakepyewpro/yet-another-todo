@@ -247,6 +247,16 @@ dialog button {
   gap: 0.5em;
 }
 
+#form-toggles button.selected {
+  background-color: black;
+  color: white;
+}
+
+#form-toggles button.selected:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 .form-input {
   display: flex;
   align-items: center;
@@ -258,14 +268,23 @@ label {
   width: 9ch;
 }
 
-.form-input input, textarea {
+.form-input input, textarea, select {
   flex-grow: 1;
+
+  padding: 0.25rem;
+  
+  background-color: white;
+  border: 2px solid #e7e7e7;
+  border-radius: 0.5rem;
+}
+
+input[name="name"] {
+  min-width: 30ch;
 }
 
 textarea {
   resize: none;
-  height: 3em;
-  min-width: 30ch;
+  height: 4em;
 
   font-size: 0.75em;
 }
