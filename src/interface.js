@@ -1,7 +1,14 @@
+import { Project } from "./items";
+
 const {format} = require ("date-fns");
 
 export default class UI {
-   initialize() {
+  constructor() {
+    this.taskBtn = document.querySelector("button#task-btn");
+    this.projBtn = document.querySelector("button#proj-btn");
+  }
+
+  initialize() {
     this.initButtons();
   }
 
@@ -19,23 +26,57 @@ export default class UI {
     });
 
     createBtn.addEventListener("click", () => {
-      this.openDialog();
+    const dialog = document.querySelector("dialog");
+    dialog.showModal();
+    this.configDialog("task");
+    });
+
+    this.taskBtn.addEventListener("click", () => {
+      this.handleToggle("task");
+    });
+    this.projBtn.addEventListener("click", () => {
+      this.handleToggle("proj");
     });
   }
 
-  openDialog() {
-    const dialog = document.querySelector("dialog");
-    dialog.showModal();
-
-    const form = document.querySelector("form")
-    
+  configDialog(type) {
     const nameDiv = UI.getNameDiv();
+    const btnDiv = this.getButtonsDiv();
+    const form = document.querySelector("form");
+    form.replaceChildren();
+
+    if (type === "task") {
     const notesDiv = UI.getNotesDiv();
     const dateDiv = UI.getDateDiv();
-    const btnDiv = UI.getButtonsDiv();
+    const projDiv = UI.getProjectDiv(["Planner", "Work"]);
 
-    form.append(nameDiv, notesDiv, dateDiv, btnDiv);
+    form.append(nameDiv, notesDiv, dateDiv, projDiv, btnDiv);
+    } else if (type === "proj") {
+      form.append(nameDiv, btnDiv);
+    }
+  }
 
+  handleToggle(type) {
+   if (this.taskBtn.classList.contains("selected")) {
+    if (type === "task") return;
+    else {
+      this.taskBtn.classList.remove("selected");
+      this.projBtn.classList.add("selected");
+      this.configDialog("proj");
+    }
+   } else if (this.projBtn.classList.contains("selected")) {
+    if (type === "proj") return;
+    else {
+      this.projBtn.classList.remove("selected");
+      this.taskBtn.classList.add("selected");
+      this.configDialog("task");
+    }
+   }
+  }
+
+  resetToggle() {
+    this.taskBtn.classList.add("selected");
+    this.projBtn.classList.remove("selected");
   }
 
   static getNameDiv() {
@@ -84,10 +125,29 @@ export default class UI {
   }
 
   static getProjectDiv(projectNames) {
-    //TODO
+    const projDiv = document.createElement("div");
+    projDiv.classList.add("form-input");
+    const projLabel = document.createElement("label");
+    projLabel.setAttribute("for", "proj");
+    projLabel.innerText = "PROJECT";
+    const projSelect = document.createElement("select");
+    projSelect.setAttribute("name", "proj");
+
+    for (const project of projectNames) {
+      const option = document.createElement("option");
+      option.setAttribute("value", project);
+      option.innerText = project;
+      if (project === "Planner") {
+        option.setAttribute("selected", "");
+      };
+      projSelect.append(option);
+    };
+
+    projDiv.append(projLabel, projSelect);
+    return projDiv;
   }
 
-  static getButtonsDiv() {
+  getButtonsDiv() {
     const btnDiv = document.createElement("div");
     btnDiv.id = "form-btns"
     const saveBtn = document.createElement("button");
@@ -102,6 +162,30 @@ export default class UI {
       const dialog = document.querySelector("dialog");
       const form = document.querySelector("form");
 
+      if (this.taskBtn.classList.contains("selected")) {
+        const name = document.querySelector('input[name="name"]');
+        const notes = document.querySelector('textarea[name="notes"]');
+        const date = document.querySelector('input[name="date"]');
+        const project = document.querySelector('select[name="proj"]');
+
+        const nameVal = name.value;
+        const notesVal = notes.value;
+        const dateVal = date.value;
+        const projVal = project.value;
+
+        console.log (
+          "name: " + nameVal + "\nnotes: " + notesVal + "\ndate: " + dateVal 
+          + "\nproj: " + projVal + "\ntype: Task");
+        this.resetToggle();
+
+      } else if (this.projBtn.classList.contains("selected")) {
+        const name = document.querySelector('input[name="name"]');
+        const nameVal = name.value;
+
+        console.log ("name: " + nameVal + "\ntype: Project");
+        this.resetToggle();
+      }
+      
       dialog.close();
       form.replaceChildren();
     });
@@ -110,6 +194,7 @@ export default class UI {
       const dialog = document.querySelector("dialog");
       const form = document.querySelector("form");
 
+      this.resetToggle();
       dialog.close();
       form.replaceChildren();
     });
