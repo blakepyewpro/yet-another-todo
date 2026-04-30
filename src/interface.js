@@ -6,6 +6,8 @@ export default class UI {
   constructor() {
     this.taskBtn = document.querySelector("button#task-btn");
     this.projBtn = document.querySelector("button#proj-btn");
+    this.dialog = document.querySelector("dialog");
+    this.form = document.querySelector("form");
   }
 
   initialize() {
@@ -16,7 +18,7 @@ export default class UI {
     const menuBtn = document.querySelector("button#menu");
     const createBtn = document.querySelector("button#create");
 
-    menuBtn.addEventListener("click", () =>{
+    menuBtn.addEventListener("click", () => {
       const displayArea = document.querySelector("div#display");
       if (displayArea.classList.contains("hidden")) {
         displayArea.classList.remove("hidden");
@@ -26,9 +28,8 @@ export default class UI {
     });
 
     createBtn.addEventListener("click", () => {
-    const dialog = document.querySelector("dialog");
-    dialog.showModal();
-    this.configDialog("task");
+      this.dialog.showModal();
+      this.configDialog("task");
     });
 
     this.taskBtn.addEventListener("click", () => {
@@ -42,36 +43,35 @@ export default class UI {
   configDialog(type) {
     const nameDiv = UI.getNameDiv();
     const btnDiv = this.getButtonsDiv();
-    const form = document.querySelector("form");
-    form.replaceChildren();
+    this.form.replaceChildren();
 
     if (type === "task") {
-    const notesDiv = UI.getNotesDiv();
-    const dateDiv = UI.getDateDiv();
-    const projDiv = UI.getProjectDiv(["Planner", "Work"]);
+      const notesDiv = UI.getNotesDiv();
+      const dateDiv = UI.getDateDiv();
+      const projDiv = UI.getProjectDiv(["Planner", "Work"]);
 
-    form.append(nameDiv, notesDiv, dateDiv, projDiv, btnDiv);
+      this.form.append(nameDiv, notesDiv, dateDiv, projDiv, btnDiv);
     } else if (type === "proj") {
-      form.append(nameDiv, btnDiv);
+      this.form.append(nameDiv, btnDiv);
     }
   }
 
   handleToggle(type) {
-   if (this.taskBtn.classList.contains("selected")) {
-    if (type === "task") return;
-    else {
-      this.taskBtn.classList.remove("selected");
-      this.projBtn.classList.add("selected");
-      this.configDialog("proj");
+    if (this.taskBtn.classList.contains("selected")) {
+      if (type === "task") return;
+      else {
+        this.taskBtn.classList.remove("selected");
+        this.projBtn.classList.add("selected");
+        this.configDialog("proj");
+      }
+    } else if (this.projBtn.classList.contains("selected")) {
+      if (type === "proj") return;
+      else {
+        this.projBtn.classList.remove("selected");
+        this.taskBtn.classList.add("selected");
+        this.configDialog("task");
+      }
     }
-   } else if (this.projBtn.classList.contains("selected")) {
-    if (type === "proj") return;
-    else {
-      this.projBtn.classList.remove("selected");
-      this.taskBtn.classList.add("selected");
-      this.configDialog("task");
-    }
-   }
   }
 
   resetToggle() {
@@ -139,9 +139,9 @@ export default class UI {
       option.innerText = project;
       if (project === "Planner") {
         option.setAttribute("selected", "");
-      };
+      }
       projSelect.append(option);
-    };
+    }
 
     projDiv.append(projLabel, projSelect);
     return projDiv;
@@ -149,7 +149,7 @@ export default class UI {
 
   getButtonsDiv() {
     const btnDiv = document.createElement("div");
-    btnDiv.id = "form-btns"
+    btnDiv.id = "form-btns";
     const saveBtn = document.createElement("button");
     saveBtn.id = "save-btn";
     saveBtn.innerText = "Save";
@@ -159,8 +159,6 @@ export default class UI {
     btnDiv.append(saveBtn, cancelBtn);
 
     saveBtn.addEventListener("click", () => {
-      const dialog = document.querySelector("dialog");
-      const form = document.querySelector("form");
 
       if (this.taskBtn.classList.contains("selected")) {
         const name = document.querySelector('input[name="name"]');
@@ -173,30 +171,34 @@ export default class UI {
         const dateVal = date.value;
         const projVal = project.value;
 
-        console.log (
-          "name: " + nameVal + "\nnotes: " + notesVal + "\ndate: " + dateVal 
-          + "\nproj: " + projVal + "\ntype: Task");
+        console.log(
+          "name: " +
+            nameVal +
+            "\nnotes: " +
+            notesVal +
+            "\ndate: " +
+            dateVal +
+            "\nproj: " +
+            projVal +
+            "\ntype: Task",
+        );
         this.resetToggle();
-
       } else if (this.projBtn.classList.contains("selected")) {
         const name = document.querySelector('input[name="name"]');
         const nameVal = name.value;
 
-        console.log ("name: " + nameVal + "\ntype: Project");
+        console.log("name: " + nameVal + "\ntype: Project");
         this.resetToggle();
       }
-      
-      dialog.close();
-      form.replaceChildren();
-    });
-    
-    cancelBtn.addEventListener("click", () => {
-      const dialog = document.querySelector("dialog");
-      const form = document.querySelector("form");
 
+      this.dialog.close();
+      this.form.replaceChildren();
+    });
+
+    cancelBtn.addEventListener("click", () => {
       this.resetToggle();
-      dialog.close();
-      form.replaceChildren();
+      this.dialog.close();
+      this.form.replaceChildren();
     });
 
     return btnDiv;
