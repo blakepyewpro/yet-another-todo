@@ -1,6 +1,7 @@
 export class MasterList {
   constructor(saveData) {
     this.items = [];
+    this.display = [];
 
     if (saveData) {
       for (let item in saveData.items) {
@@ -23,7 +24,7 @@ export class MasterList {
 }
 
 export class Project {
-  constructor(name, dueDate, items, isDefault = false) {
+  constructor(name, items, isDefault = false) {
     this.itemType = "project";
     this.name = name;
     this.items = items;
@@ -36,10 +37,11 @@ export class Project {
 }
 
 export class Task {
-  constructor(name, description, dueDate, isComplete = false) {
+  constructor(name, description, prio, dueDate, isComplete = false) {
     this.itemType = "task";
     this.name = name;
     this.description = description;
+    this.prio = prio;
     this.dueDate = dueDate;
     this.isComplete = isComplete;
   }
