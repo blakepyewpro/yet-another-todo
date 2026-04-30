@@ -12,6 +12,9 @@ export default class UI {
 
   initialize() {
     this.initButtons();
+    this.dialog.addEventListener('cancel', (event) => {
+      event.preventDefault(); // Prevents the dialog from closing
+    });
   }
 
   initButtons() {
