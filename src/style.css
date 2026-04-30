@@ -247,12 +247,12 @@ dialog button {
   gap: 0.5em;
 }
 
-#form-toggles button.selected {
+#form-toggles button.selected, .prio-buttons button.selected {
   background-color: black;
   color: white;
 }
 
-#form-toggles button.selected:hover {
+#form-toggles button.selected:hover, .prio-buttons button.selected {
   transform: none;
   box-shadow: none;
 }
@@ -287,6 +287,19 @@ textarea {
   height: 4em;
 
   font-size: 0.75em;
+}
+
+.prio-buttons {
+  display: flex;
+  gap: 0.5em;
+  justify-content: space-between;
+  align-items: center;
+
+  flex-grow: 1;
+}
+.prio-buttons button {
+  font-size: 0.75em;
+  width: 9ch;
 }
 
 #form-btns {
