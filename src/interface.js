@@ -47,10 +47,11 @@ export default class UI {
 
     if (type === "task") {
       const notesDiv = UI.getNotesDiv();
+      const prioDiv = UI.getPrioDiv();
       const dateDiv = UI.getDateDiv();
-      const projDiv = UI.getProjectDiv(["Planner", "Work"]);
+      const projDiv = UI.getProjectDiv(["None", "Work"]);
 
-      this.form.append(nameDiv, notesDiv, dateDiv, projDiv, btnDiv);
+      this.form.append(nameDiv, notesDiv, prioDiv, dateDiv, projDiv, btnDiv);
     } else if (type === "proj") {
       this.form.append(nameDiv, btnDiv);
     }
@@ -79,7 +80,7 @@ export default class UI {
     this.projBtn.classList.remove("selected");
   }
 
-  static getNameDiv() {
+  static getNameDiv(value) {
     const nameDiv = document.createElement("div");
     nameDiv.classList.add("form-input");
     const nameLabel = document.createElement("label");
@@ -88,12 +89,13 @@ export default class UI {
     const nameField = document.createElement("input");
     nameField.setAttribute("name", "name");
     nameField.setAttribute("type", "text");
+    if (value) nameField.value = value;
     nameDiv.append(nameLabel, nameField);
 
     return nameDiv;
   }
 
-  static getNotesDiv() {
+  static getNotesDiv(value) {
     const notesDiv = document.createElement("div");
     notesDiv.classList.add("form-input");
     const notesLabel = document.createElement("label");
@@ -101,12 +103,13 @@ export default class UI {
     notesLabel.innerText = "NOTES";
     const notesField = document.createElement("textarea");
     notesField.setAttribute("name", "notes");
+    if (value) notesField.value = value;
     notesDiv.append(notesLabel, notesField);
 
     return notesDiv;
   }
 
-  static getDateDiv() {
+  static getDateDiv(value) {
     const today = new Date();
     const dateStr = format(today, "yyyy-MM-dd");
 
@@ -119,12 +122,13 @@ export default class UI {
     dateField.setAttribute("type", "date");
     dateField.setAttribute("name", "date");
     dateField.setAttribute("min", dateStr);
+    if (value) dateField.value = value;
     dateDiv.append(dateLabel, dateField);
 
     return dateDiv;
   }
 
-  static getProjectDiv(projectNames) {
+  static getProjectDiv(projectNames, value) {
     const projDiv = document.createElement("div");
     projDiv.classList.add("form-input");
     const projLabel = document.createElement("label");
@@ -137,7 +141,9 @@ export default class UI {
       const option = document.createElement("option");
       option.setAttribute("value", project);
       option.innerText = project;
-      if (project === "Planner") {
+      if (project === value) {
+        option.setAttribute("selected", "");
+      } else if (!value && project === "None") {
         option.setAttribute("selected", "");
       }
       projSelect.append(option);
@@ -145,6 +151,72 @@ export default class UI {
 
     projDiv.append(projLabel, projSelect);
     return projDiv;
+  }
+
+  static getPrioDiv(prio) {
+    const prioDiv = document.createElement("div");
+    prioDiv.classList.add("form-input");
+    const prioLabel = document.createElement("label");
+    prioLabel.innerText = "PRIORITY";
+    const innerDiv = document.createElement("div");
+    innerDiv.classList.add("prio-buttons");
+    const lowBtn = document.createElement("button");
+    lowBtn.setAttribute("type", "button");
+    lowBtn.classList.add("low-prio")
+    lowBtn.innerText = "Low";
+    const medBtn = document.createElement("button");
+    medBtn.setAttribute("type", "button");
+    medBtn.classList.add("med-prio");
+    medBtn.innerText = "Medium";
+    const highBtn = document.createElement("button");
+    highBtn.setAttribute("type", "button");
+    highBtn.classList.add("high-prio");
+    highBtn.innerText = "High";
+    innerDiv.append(lowBtn, medBtn, highBtn);
+    prioDiv.append(prioLabel, innerDiv);
+
+    if (prio === "low" || !prio) lowBtn.classList.add("selected");
+    else if (prio === "med") medBtn.classList.add("selected");
+    else if (prio === "high") highBtn.classList.add("selected");
+
+    lowBtn.addEventListener("click", () => {this.handlePrioToggle("low")});
+    medBtn.addEventListener("click", () => {this.handlePrioToggle("med")});
+    highBtn.addEventListener("click", () => {this.handlePrioToggle("high")});
+    
+    return prioDiv;
+  }
+
+  static handlePrioToggle(prioClicked) {
+    const lowBtn = document.querySelector("button.low-prio");
+    const medBtn = document.querySelector("button.med-prio");
+    const highBtn = document.querySelector("button.high-prio");
+
+    const isLow = lowBtn.classList.contains("selected");
+    const isMed = medBtn.classList.contains("selected");
+    const isHigh = highBtn.classList.contains("selected");
+
+    if (prioClicked === "low") {
+      if (isLow) return;
+      else {
+        medBtn.classList.remove("selected");
+        highBtn.classList.remove("selected");
+        lowBtn.classList.add("selected");
+      }
+    } else if (prioClicked === "med") {
+      if (isMed) return;
+      else {
+        lowBtn.classList.remove("selected");
+        highBtn.classList.remove("selected");
+        medBtn.classList.add("selected");
+      }
+    } else if (prioClicked === "high") {
+      if (isHigh) return;
+      else {
+        lowBtn.classList.remove("selected");
+        medBtn.classList.remove("selected");
+        highBtn.classList.add("selected");
+      }
+    }
   }
 
   getButtonsDiv() {
@@ -171,11 +243,26 @@ export default class UI {
         const dateVal = date.value;
         const projVal = project.value;
 
+        const lowBtn = document.querySelector("button.low-prio");
+        const medBtn = document.querySelector("button.med-prio");
+        const highBtn = document.querySelector("button.high-prio");
+
+        const isLow = lowBtn.classList.contains("selected");
+        const isMed = medBtn.classList.contains("selected");
+        const isHigh = highBtn.classList.contains("selected");
+
+        let prioVal = "";
+        if (isLow) prioVal = "low";
+        else if (isMed) prioVal = "med";
+        else if (isHigh) prioVal = "high";
+
         console.log(
           "name: " +
             nameVal +
             "\nnotes: " +
             notesVal +
+            "\nprio: " +
+            prioVal +
             "\ndate: " +
             dateVal +
             "\nproj: " +
