@@ -5,9 +5,9 @@ export class MasterList {
     this.display = [];
 
     const saveStr = Storage.load();
-    if (saveStr.projects) {
-      const save = JSON.parse(saveStr);
-      console.log(save);
+    const save = JSON.parse(saveStr);
+    if (save.projects) {
+      console.log("loaded save:\n" + save);
       for (const project of save.projects) {
         this.saveOrUpdate(project);
       }
