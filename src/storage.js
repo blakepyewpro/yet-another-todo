@@ -31,4 +31,8 @@ export default class Storage {
       return localStorage.getItem("masterList");
     } else return false;
   }
+
+  static clear() {
+    localStorage.removeItem("masterList");
+  }
 }
