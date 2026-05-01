@@ -5,44 +5,58 @@ export class MasterList {
     this.display = [];
 
     const saveStr = Storage.load();
-    const save = JSON.parse(saveStr);
-    if (save.projects) {
+    if (saveStr != null) {
+      const save = JSON.parse(saveStr);
       console.log("loaded save:\n" + save);
       for (const project of save.projects) {
         this.saveOrUpdate(project);
       }
     } else {
-      //TODO: create initial default project and use flag to create empty state
+      console.log("No save data in localStorage")
+      //TODO: Handle intial / default state
     }
   }
 
   saveOrUpdate(item, originalItem) {
     if (originalItem) {
       const findOriginalByName = (element) => {
-        element.name == originalItem.name;
+        return element.name == originalItem.name;
       }
 
       if (originalItem.itemType == "project") {
-        const projIndex = this.projects.findIndex(findOriginalByName);
-        this.projects[projIndex].name = item.name;
+        const project = this.projects.find(findOriginalByName);
+        project.name = item.name;
+        for (const task of project.tasks) {
+          task.project = project.name;
+        }
         Storage.store(this);
       } else if (originalItem.itemType == "task") {
         const findOrigProjByName = (element) => {
-          element.name == originalItem.project;
+          return element.name == originalItem.project;
         }
+        const origProjIndex = this.projects.findIndex(findOrigProjByName);
+
         if (item.project != originalItem.project) {
-          const origProjIndex = this.projects.findIndex(findOrigProjByName);
           const origTaskIndex = this.projects[origProjIndex].tasks.findIndex(findOriginalByName);
           this.projects[origProjIndex].tasks.splice(origTaskIndex, 1);
-
+          
           const newTask = new Task(item.name, item.notes, item.prio, 
-            item.date, item.project, item.isComplete);
+            item.dueDate, item.project, item.isComplete);
           
           const findNewProjByName = (element) => {
-            element.name == item.project;
+            return element.name == item.project;
           }
           const newProjIndex = this.projects.findIndex(findNewProjByName);
           this.projects[newProjIndex].tasks.push(newTask);
+          Storage.store(this);
+        } else if (item.project == originalItem.project) {
+          const origTask = this.projects[origProjIndex].find(findOriginalByName);
+          origTask.name = item.name;
+          origTask.notes = item.notes;
+          origTask.prio = item.prio;
+          origTask.dueDate = item.dueDate;
+          origTask.isComplete = item.isComplete;
+          Storage.store(this);
         }
       }
     } else {
@@ -58,8 +72,13 @@ export class MasterList {
         const findProj = (element) => element.name == newTask.project;
         const projIndex = this.projects.findIndex(findProj);
         this.projects[projIndex].tasks.push(newTask);
+        Storage.store(this);
       }
     }
+  }
+
+  delete(item) {
+    //TODO: Delete Project or Task and save
   }
 }
 
