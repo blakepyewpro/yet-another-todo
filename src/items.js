@@ -18,13 +18,32 @@ export class MasterList {
 
   saveOrUpdate(item, originalItem) {
     if (originalItem) {
+      const findOriginalByName = (element) => {
+        element.name == originalItem.name;
+      }
+
       if (originalItem.itemType == "project") {
-        const findProj = (element) => element.name == originalItem.name;
-        const projIndex = this.projects.findIndex(findProj);
+        const projIndex = this.projects.findIndex(findOriginalByName);
         this.projects[projIndex].name = item.name;
         Storage.store(this);
       } else if (originalItem.itemType == "task") {
-        //TODO: find if project assigned changed, if so create new task under new project and delete old; else update existing task
+        const findOrigProjByName = (element) => {
+          element.name == originalItem.project;
+        }
+        if (item.project != originalItem.project) {
+          const origProjIndex = this.projects.findIndex(findOrigProjByName);
+          const origTaskIndex = this.projects[origProjIndex].tasks.findIndex(findOriginalByName);
+          this.projects[origProjIndex].tasks.splice(origTaskIndex, 1);
+
+          const newTask = new Task(item.name, item.notes, item.prio, 
+            item.date, item.project, item.isComplete);
+          
+          const findNewProjByName = (element) => {
+            element.name == item.project;
+          }
+          const newProjIndex = this.projects.findIndex(findNewProjByName);
+          this.projects[newProjIndex].tasks.push(newTask);
+        }
       }
     } else {
       if (item.itemType == "project") {
