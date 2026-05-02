@@ -50,7 +50,7 @@ export class MasterList {
           this.projects[newProjIndex].tasks.push(newTask);
           Storage.store(this);
         } else if (item.project == originalItem.project) {
-          const origTask = this.projects[origProjIndex].find(findOriginalByName);
+          const origTask = this.projects[origProjIndex].tasks.find(findOriginalByName);
           origTask.name = item.name;
           origTask.notes = item.notes;
           origTask.prio = item.prio;
