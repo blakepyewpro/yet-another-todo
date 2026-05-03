@@ -1,16 +1,20 @@
-import { Project } from "./items";
-
 const {format} = require ("date-fns");
+import { MasterList } from "./items";
 
+//TODO: Add empty state handling to list-area
+//  <div id="list-area" class="empty">
+//     <div id="placeholder">
+//       <span id="ph-title">Nothing to do!</span>
+//       <span id="ph-body">Click "Create" to get started</span>
+//     </div>
+//   </div>
 export default class UI {
   constructor() {
     this.taskBtn = document.querySelector("button#task-btn");
     this.projBtn = document.querySelector("button#proj-btn");
     this.dialog = document.querySelector("dialog");
     this.form = document.querySelector("form");
-  }
 
-  initialize() {
     this.initButtons();
     this.dialog.addEventListener('cancel', (event) => {
       event.preventDefault(); // Prevents the dialog from closing
