@@ -4,45 +4,55 @@ import Storage from "./storage.js"
 import { MasterList, Project, Task } from "./items.js";
 
 const myUI = new UI();
-myUI.initialize();
 
 Storage.clear();
 const myList = new MasterList();
 
-const testProject1 = new Project("None", true);
+let testProject1 = new Project("None", true);
 myList.saveOrUpdate(testProject1);
-console.log("Test 1:\n"
+testProject1 = myList.projects[0];
+console.log("Add Default Project:\n"
   + Storage.load()
 );
 
-const testTask1 = new Task("test task", "do some testing", 
-  "low", new Date (), "None");
+let testTask1 = new Task("test task", "do some testing", 
+  "low", new Date (), testProject1.id);
 myList.saveOrUpdate(testTask1);
-console.log("Test 2:\n"
+testTask1 = myList.projects[0].tasks[0];
+console.log("Add Task:\n"
   + Storage.load()
 );
 
-const testProject2 = new Project("Work");
+let testProject2 = new Project("Work");
 myList.saveOrUpdate(testProject2);
-console.log("Test 3:\n"
+testProject2 = myList.projects[1];
+console.log("Add 2nd Project:\n"
   + Storage.load()
 );
 
-const testTask2 = new Task("edited task", "do edit stuff", 
-  "med", new Date("2026-05-30"), "Work");
+let testTask2 = new Task("edited task", "do edit stuff", 
+  "med", new Date("2026-05-30"), testProject2.id);
 myList.saveOrUpdate(testTask2, testTask1);
-console.log("Test 4:\n"
+testTask2 = myList.projects[1].tasks[0]
+console.log("Edit Task and Switch Project:\n"
   + Storage.load()
 );
 
 const replacementProject = new Project ("Play");
 myList.saveOrUpdate(replacementProject, testProject2);
-console.log("Test 5:\n" + Storage.load());
+console.log("Rename Project:\n" + Storage.load());
 
 const testTask3 = new Task ("even more edited task",
   "do more edited stuff",
   "high",
   "2026-06-01",
-  "Play",
+  testProject2.id,
 );
-console.log("Test 6:\n" + Storage.load());
+myList.saveOrUpdate(testTask3, testTask2);
+console.log("Edit Task in Place:\n" + Storage.load());
+
+myList.delete(testTask3);
+console.log("Delete Task:\n" + Storage.load());
+
+myList.delete(testProject2);
+console.log("Delete Project:\n" + Storage.load());
