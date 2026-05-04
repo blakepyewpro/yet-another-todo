@@ -21,10 +21,35 @@
     </ul>
     <ul id="projects"></ul>
   </div>
-  <div id="list-area" class="empty">
-    <div id="placeholder">
-      <span id="ph-title">Nothing to do!</span>
-      <span id="ph-body">Click "Create" to get started</span>
+  <div id="list-area">
+    <div class="task complete" data-id="uuid">
+      <div class="task-content">
+        <div class="task-header">
+          <div class="task-left">
+            <input type="checkbox">
+            <span class="task-title">Task 1</span>
+          </div>
+          <div class="task-center">
+            <span class="task-prio med">Medium</span>
+          </div>
+          <div class="task-right">
+            <div class="due-date">
+              <span class="date-label">DUE BY</span>
+              <span class="date due">22/05/2026</span>
+            </div>
+          </div>
+        </div>
+        <div class="task-notes">
+          <span class="notes-label">NOTES</span>
+          <span class="notes">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent et venenatis est.
+          </span>
+        </div>
+      </div>
+      <div class="task-buttons">
+        <button class="task-edit"><img src="assets/file-edit-outline.svg" alt="edit task"></button>
+        <button class="task-delete"><img src="assets/delete-outline.svg" alt="delete task"></button>
+      </div>
     </div>
   </div>
 </div>
