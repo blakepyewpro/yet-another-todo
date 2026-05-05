@@ -298,3 +298,65 @@ export default class UI {
     return btnDiv;
   }
 }
+class TaskDiv {
+  constructor(task) {
+    this.id = task.id;
+
+
+    this.taskDiv = document.createElement("div");
+    taskDiv.classList.add("task");
+    taskDiv.setAttribute("data-id", task.id);
+    if (task.isComplete) {
+      taskDiv.classList.add("complete");
+    }
+
+    this.contentDiv = document.createElement("div");
+    this.contentDiv.classList.add("task-content");
+    this.taskDiv.append(this.contentDiv);
+
+    this.taskHeader = document.createElement("div");
+    this.taskHeader.classList.add("task-header");
+    this.contentDiv.append(this.taskHeader);
+
+
+    this.taskLeft = document.createElement("div");
+    this.taskLeft.classList.add("task-left");
+    this.taskHeader.append(this.taskLeft);
+    
+    this.checkbox = document.createElement("input");
+    this.checkbox.setAttribute("type", "checkbox");
+    this.taskLeft.append(this.checkbox);
+
+    this.title = document.createElement("span");
+    this.title.classList.add("task-title");
+    this.title.innerText = task.name;
+    this.taskLeft.append(this.title);
+
+
+    this.taskCenter = document.createElement("div");
+    this.taskCenter.classList.add("task-center");
+    this.taskHeader.append(this.taskCenter);
+
+    this.prio = document.createElement("span");
+    if (task.prio == "low") {
+      this.prio.classList.add("task-prio", "low");
+      this.prio.innerText = "Low";
+    } else if (task.prio == "med") {
+      this.prio.classList.add("task-prio", "med");
+      this.prio.innerText = "Medium";
+    } else if (task.prio == "high") {
+      this.prio.classList.add("task-prio", "high");
+      this.prio.innerText = "High";
+    }
+    this.taskCenter.append(this.prio);
+
+
+    this.taskRight = document.createElement("div");
+    this.taskRight.classList.add("task-right");
+    this.taskHeader.append(this.taskRight);
+
+    this.dateDiv = document.createElement("div");
+    this.dateDiv.classList.add("due-date");
+    //TODO: Continue adding html elements
+  }
+}
