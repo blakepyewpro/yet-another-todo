@@ -136,8 +136,8 @@ export default class UI {
     const dateField = document.createElement("input");
     dateField.setAttribute("type", "date");
     dateField.setAttribute("name", "date");
-    dateField.setAttribute("min", dateStr);
     if (value) dateField.value = value;
+    else dateField.value = dateStr;
     dateDiv.append(dateLabel, dateField);
 
     return dateDiv;
