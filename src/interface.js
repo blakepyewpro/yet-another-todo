@@ -18,11 +18,15 @@ export default class UI {
     this.projBtn = document.querySelector("button#proj-btn");
     this.dialog = document.querySelector("dialog");
     this.form = document.querySelector("form");
+    this.listArea = document.querySelector("div#list-area");
 
     this.initButtons();
     this.dialog.addEventListener('cancel', (event) => {
       event.preventDefault(); // Prevents the dialog from closing
     });
+
+    this.masterList = new MasterList();
+    this.redrawList();
   }
 
   initButtons() {
@@ -60,7 +64,7 @@ export default class UI {
       const notesDiv = UI.getNotesDiv();
       const prioDiv = UI.getPrioDiv();
       const dateDiv = UI.getDateDiv();
-      const projDiv = UI.getProjectDiv(["None", "Work"]);
+      const projDiv = UI.getProjectDiv(this.masterList.projects);
 
       this.form.append(nameDiv, notesDiv, prioDiv, dateDiv, projDiv, btnDiv);
     } else if (type === "proj") {
@@ -139,7 +143,7 @@ export default class UI {
     return dateDiv;
   }
 
-  static getProjectDiv(projectNames, value) {
+  static getProjectDiv(projects, value) {
     const projDiv = document.createElement("div");
     projDiv.classList.add("form-input");
     const projLabel = document.createElement("label");
@@ -148,13 +152,13 @@ export default class UI {
     const projSelect = document.createElement("select");
     projSelect.setAttribute("name", "proj");
 
-    for (const project of projectNames) {
+    for (const project of projects) {
       const option = document.createElement("option");
-      option.setAttribute("value", project);
-      option.innerText = project;
+      option.setAttribute("value", project.id);
+      option.innerText = project.name;
       if (project === value) {
         option.setAttribute("selected", "");
-      } else if (!value && project === "None") {
+      } else if (!value && project.isDefault) {
         option.setAttribute("selected", "");
       }
       projSelect.append(option);
@@ -236,9 +240,11 @@ export default class UI {
     const saveBtn = document.createElement("button");
     saveBtn.id = "save-btn";
     saveBtn.innerText = "Save";
+    saveBtn.setAttribute("type", "button");
     const cancelBtn = document.createElement("button");
     cancelBtn.id = "cancel-btn";
     cancelBtn.innerText = "Cancel";
+    cancelBtn.setAttribute("type", "button");
     btnDiv.append(saveBtn, cancelBtn);
 
     saveBtn.addEventListener("click", () => {
@@ -267,7 +273,9 @@ export default class UI {
         else if (isMed) prioVal = "med";
         else if (isHigh) prioVal = "high";
 
-        const newTask = new Task(nameVal, notesVal, prioVal, dateVal)
+        const newTask = new Task(nameVal, notesVal, prioVal, dateVal, projVal);
+        this.masterList.saveOrUpdate(newTask);
+        this.redrawList();
 
       } else if (this.projBtn.classList.contains("selected")) {
         const name = document.querySelector('input[name="name"]');
@@ -289,6 +297,25 @@ export default class UI {
 
     return btnDiv;
   }
+
+  redrawList() {
+    //will need to change to use MasterList.display instead of projects
+    this.listArea.replaceChildren();
+    if (!this.masterList.isEmpty()) {
+      for (const project of this.masterList.projects) {
+        if (project.isDefault) {
+          for (const task of project.tasks) {
+            const newDiv = new TaskDiv(task);
+            this.listArea.append(newDiv.taskDiv);
+          }
+        } else {
+          //Add project div, then add task divs, then append
+        }
+      }
+    } else {
+      //Handle empty state
+    }
+  }
 }
 class TaskDiv {
   constructor(task) {
@@ -296,24 +323,24 @@ class TaskDiv {
 
 
     this.taskDiv = document.createElement("div");
-    taskDiv.classList.add("task");
-    taskDiv.setAttribute("data-id", task.id);
+    this.taskDiv.classList.add("task");
+    this.taskDiv.setAttribute("data-id", task.id);
     if (task.isComplete) {
-      taskDiv.classList.add("complete");
+      this.taskDiv.classList.add("complete");
     }
 
     const contentDiv = document.createElement("div");
     contentDiv.classList.add("task-content");
-    this.taskDiv.append(this.contentDiv);
+    this.taskDiv.append(contentDiv);
 
     const taskHeader = document.createElement("div");
-    this.taskHeader.classList.add("task-header");
-    contentDiv.append(this.taskHeader);
+    taskHeader.classList.add("task-header");
+    contentDiv.append(taskHeader);
 
 
     const taskLeft = document.createElement("div");
     taskLeft.classList.add("task-left");
-    taskHeader.append(this.taskLeft);
+    taskHeader.append(taskLeft);
     
     this.checkbox = document.createElement("input");
     this.checkbox.setAttribute("type", "checkbox");
@@ -327,7 +354,7 @@ class TaskDiv {
 
     const taskCenter = document.createElement("div");
     taskCenter.classList.add("task-center");
-    taskHeader.append(this.taskCenter);
+    taskHeader.append(taskCenter);
 
     this.prio = document.createElement("span");
     if (task.prio == "low") {
@@ -340,45 +367,45 @@ class TaskDiv {
       this.prio.classList.add("task-prio", "high");
       this.prio.innerText = "High";
     }
-    this.taskCenter.append(this.prio);
+    taskCenter.append(this.prio);
 
 
     const taskRight = document.createElement("div");
     taskRight.classList.add("task-right");
-    this.taskHeader.append(this.taskRight);
+    taskHeader.append(taskRight);
 
     const dateDiv = document.createElement("div");
     dateDiv.classList.add("due-date");
-    taskRight.append(this.dateDiv);
+    taskRight.append(dateDiv);
 
     const dateLabel = document.createElement("span");
     dateLabel.classList.add("date-label");
     dateLabel.innerText = "DUE BY";
-    dateDiv.append(this.dateLabel);
+    dateDiv.append(dateLabel);
 
     this.date = document.createElement("span");
     this.date.classList.add("date");
     const today = new Date();
-    if (compareDesc(task.date, today) >= 0) {
+    if (compareDesc(task.dueDate, today) >= 0) {
       this.date.classList.add("due");
     }
-    this.date.innerText = format(task.date, "dd-MM-yyyy");
+    this.date.innerText = format(task.dueDate, "dd-MM-yyyy");
     dateDiv.append(this.date);
 
 
     const notesDiv = document.createElement("div");
     notesDiv.classList.add("task-notes");
-    this.contentDiv.append(this.notesDiv);
+    contentDiv.append(notesDiv);
 
     const notesLabel = document.createElement("span");
     notesLabel.classList.add("notes-label");
     notesLabel.innerText = "NOTES";
-    this.notesDiv.append(notesLabel);
+    notesDiv.append(notesLabel);
 
-    this.notes = createElement("span");
+    this.notes = document.createElement("span");
     this.notes.classList.add("notes");
     this.notes.innerText = task.notes;
-    this.notesDiv.append(this.notes);
+    notesDiv.append(this.notes);
 
 
     const buttonDiv = document.createElement("div");
