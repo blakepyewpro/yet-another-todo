@@ -1,5 +1,9 @@
 const {format} = require ("date-fns");
-import { MasterList } from "./items";
+const {compareDesc} = require("date-fns");
+import { MasterList, Task } from "./items";
+
+import editOutline from "./assets/file-edit-outline.svg";
+import deleteOutline from "./assets/delete-outline.svg";
 
 //TODO: Add empty state handling to list-area
 //  <div id="list-area" class="empty">
@@ -263,28 +267,16 @@ export default class UI {
         else if (isMed) prioVal = "med";
         else if (isHigh) prioVal = "high";
 
-        console.log(
-          "name: " +
-            nameVal +
-            "\nnotes: " +
-            notesVal +
-            "\nprio: " +
-            prioVal +
-            "\ndate: " +
-            dateVal +
-            "\nproj: " +
-            projVal +
-            "\ntype: Task",
-        );
-        this.resetToggle();
+        const newTask = new Task(nameVal, notesVal, prioVal, dateVal)
+
       } else if (this.projBtn.classList.contains("selected")) {
         const name = document.querySelector('input[name="name"]');
         const nameVal = name.value;
 
         console.log("name: " + nameVal + "\ntype: Project");
-        this.resetToggle();
       }
 
+      this.resetToggle();
       this.dialog.close();
       this.form.replaceChildren();
     });
@@ -310,32 +302,32 @@ class TaskDiv {
       taskDiv.classList.add("complete");
     }
 
-    this.contentDiv = document.createElement("div");
-    this.contentDiv.classList.add("task-content");
+    const contentDiv = document.createElement("div");
+    contentDiv.classList.add("task-content");
     this.taskDiv.append(this.contentDiv);
 
-    this.taskHeader = document.createElement("div");
+    const taskHeader = document.createElement("div");
     this.taskHeader.classList.add("task-header");
-    this.contentDiv.append(this.taskHeader);
+    contentDiv.append(this.taskHeader);
 
 
-    this.taskLeft = document.createElement("div");
-    this.taskLeft.classList.add("task-left");
-    this.taskHeader.append(this.taskLeft);
+    const taskLeft = document.createElement("div");
+    taskLeft.classList.add("task-left");
+    taskHeader.append(this.taskLeft);
     
     this.checkbox = document.createElement("input");
     this.checkbox.setAttribute("type", "checkbox");
-    this.taskLeft.append(this.checkbox);
+    taskLeft.append(this.checkbox);
 
     this.title = document.createElement("span");
     this.title.classList.add("task-title");
     this.title.innerText = task.name;
-    this.taskLeft.append(this.title);
+    taskLeft.append(this.title);
 
 
-    this.taskCenter = document.createElement("div");
-    this.taskCenter.classList.add("task-center");
-    this.taskHeader.append(this.taskCenter);
+    const taskCenter = document.createElement("div");
+    taskCenter.classList.add("task-center");
+    taskHeader.append(this.taskCenter);
 
     this.prio = document.createElement("span");
     if (task.prio == "low") {
@@ -351,12 +343,64 @@ class TaskDiv {
     this.taskCenter.append(this.prio);
 
 
-    this.taskRight = document.createElement("div");
-    this.taskRight.classList.add("task-right");
+    const taskRight = document.createElement("div");
+    taskRight.classList.add("task-right");
     this.taskHeader.append(this.taskRight);
 
-    this.dateDiv = document.createElement("div");
-    this.dateDiv.classList.add("due-date");
-    //TODO: Continue adding html elements
+    const dateDiv = document.createElement("div");
+    dateDiv.classList.add("due-date");
+    taskRight.append(this.dateDiv);
+
+    const dateLabel = document.createElement("span");
+    dateLabel.classList.add("date-label");
+    dateLabel.innerText = "DUE BY";
+    dateDiv.append(this.dateLabel);
+
+    this.date = document.createElement("span");
+    this.date.classList.add("date");
+    const today = new Date();
+    if (compareDesc(task.date, today) >= 0) {
+      this.date.classList.add("due");
+    }
+    this.date.innerText = format(task.date, "dd-MM-yyyy");
+    dateDiv.append(this.date);
+
+
+    const notesDiv = document.createElement("div");
+    notesDiv.classList.add("task-notes");
+    this.contentDiv.append(this.notesDiv);
+
+    const notesLabel = document.createElement("span");
+    notesLabel.classList.add("notes-label");
+    notesLabel.innerText = "NOTES";
+    this.notesDiv.append(notesLabel);
+
+    this.notes = createElement("span");
+    this.notes.classList.add("notes");
+    this.notes.innerText = task.notes;
+    this.notesDiv.append(this.notes);
+
+
+    const buttonDiv = document.createElement("div");
+    buttonDiv.classList.add("task-buttons");
+    this.taskDiv.append(buttonDiv);
+
+    this.editButton = document.createElement("button");
+    this.editButton.classList.add("task-edit");
+    buttonDiv.append(this.editButton);
+
+    const editImg = document.createElement("img");
+    editImg.src = editOutline;
+    editImg.alt = "edit task";
+    this.editButton.append(editImg);
+
+    this.deleteButton = document.createElement("button");
+    this.deleteButton.classList.add("task-delete");
+    buttonDiv.append(this.deleteButton);
+
+    const deleteImg = document.createElement("img");
+    deleteImg.src = deleteOutline;
+    deleteImg.alt = "delete task";
+    this.deleteButton.append(deleteImg);
   }
 }
