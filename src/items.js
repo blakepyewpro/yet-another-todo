@@ -102,6 +102,22 @@ export class MasterList {
     if (taskCounter > 0) return false;
     else return true;
   }
+
+  findProjectByID(id) {
+    for (const project of this.projects) {
+      if (project.id == id) return project;
+    }
+    return false;
+  }
+
+  findTaskByID(id) {
+    for (const project of this.projects) {
+      for (const task of project.tasks) {
+        if (task.id == id) return task;
+      }
+    }
+    return false;
+  }
 }
 
 export class Project {
