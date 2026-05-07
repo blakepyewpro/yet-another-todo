@@ -14,6 +14,8 @@ export class MasterList {
     } else {
       console.log("No save data in localStorage")
       //TODO: Handle intial / default state
+      const defaultProject = new Project("None", true);
+      this.saveOrUpdate(defaultProject);
     }
   }
 
@@ -90,6 +92,15 @@ export class MasterList {
       Storage.store(this);
       return true;
     }
+  }
+
+  isEmpty() {
+    let taskCounter = 0;
+    for (const project of this.projects) {
+      taskCounter += project.tasks.length;
+    }
+    if (taskCounter > 0) return false;
+    else return true;
   }
 }
 
