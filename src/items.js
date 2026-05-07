@@ -147,7 +147,7 @@ export class Task {
     this.name = name;
     this.notes = notes;
     this.prio = prio;
-    this.dueDate = new Date(dueDate);
+    this.dueDate = dueDate;
     this.projectID = projectID;
     this.isComplete = isComplete;
     if (!id) this.id = crypto.randomUUID();

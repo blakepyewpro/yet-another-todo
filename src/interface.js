@@ -16,12 +16,13 @@ export default class UI {
   constructor() {
     this.taskBtn = document.querySelector("button#task-btn");
     this.projBtn = document.querySelector("button#proj-btn");
-    this.createDialog = document.querySelector("dialog#creation");
-    this.createForm = document.querySelector("#create-form");
+    this.dialog = document.querySelector("dialog");
+    this.dialogHeader = document.querySelector("span#dialog-title")
+    this.form = document.querySelector("form");
     this.listArea = document.querySelector("div#list-area");
 
     this.initButtons();
-    this.createDialog.addEventListener('cancel', (event) => {
+    this.dialog.addEventListener('cancel', (event) => {
       event.preventDefault(); // Prevents the dialog from closing
     });
 
@@ -43,7 +44,7 @@ export default class UI {
     });
 
     createBtn.addEventListener("click", () => {
-      this.createDialog.showModal();
+      this.dialog.showModal();
       this.configDialog("task");
     });
 
@@ -55,10 +56,14 @@ export default class UI {
     });
   }
 
-  configDialog(type, ) {
+  configDialog(type) {
     const nameDiv = UI.getNameDiv();
     const btnDiv = this.getButtonsDiv();
-    this.createForm.replaceChildren();
+    this.form.replaceChildren();
+
+    if (this.dialogHeader.innerText == "Edit...") {
+      this.dialogHeader.innerText = "Create...";
+    }
 
     if (type === "task") {
       const notesDiv = UI.getNotesDiv();
@@ -66,22 +71,48 @@ export default class UI {
       const dateDiv = UI.getDateDiv();
       const projDiv = UI.getProjectDiv(this.masterList.projects);
 
-      this.createForm.append(nameDiv, notesDiv, prioDiv, dateDiv, projDiv, btnDiv);
+      this.form.append(nameDiv, notesDiv, prioDiv, dateDiv, projDiv, btnDiv);
     } else if (type === "proj") {
-      this.createForm.append(nameDiv, btnDiv);
+      this.form.append(nameDiv, btnDiv);
+    }
+  }
+
+  editDialog(item) {
+    const nameDiv = UI.getNameDiv(item.name);
+    const btnDiv = this.getButtonsDiv(item);
+
+    if (this.dialogHeader.innerText == "Create...") {
+      this.dialogHeader.innerText = "Edit...";
+    }
+
+    this.taskBtn.classList.add("disabled");
+    this.projBtn.classList.add("disabled");
+
+    if (item.itemType === "task") {
+      this.taskBtn.classList.add("selected");
+      this.projBtn.classList.remove("selected");
+      const notesDiv = UI.getNotesDiv(item.notes);
+      const prioDiv = UI.getPrioDiv(item.prio);
+      const dateDiv = UI.getDateDiv(item.date);
+      const projDiv = UI.getProjectDiv(this.masterList.projects, item.projectID);
+      this.form.append(nameDiv, notesDiv, prioDiv, dateDiv, projDiv, btnDiv);
+    } else if (item.itemType === "proj") {
+      this.taskBtn.classList.remove("selected");
+      this.projBtn.classList.add("selected");
+      this.form.append(nameDiv, buttonDiv);
     }
   }
 
   handleToggle(type) {
     if (this.taskBtn.classList.contains("selected")) {
-      if (type === "task") return;
+      if (type === "task" || this.taskBtn.classList.contains("disabled")) return;
       else {
         this.taskBtn.classList.remove("selected");
         this.projBtn.classList.add("selected");
         this.configDialog("proj");
       }
     } else if (this.projBtn.classList.contains("selected")) {
-      if (type === "proj") return;
+      if (type === "proj" || this.projBtn.classList.contains("disabled")) return;
       else {
         this.projBtn.classList.remove("selected");
         this.taskBtn.classList.add("selected");
@@ -93,6 +124,8 @@ export default class UI {
   resetToggle() {
     this.taskBtn.classList.add("selected");
     this.projBtn.classList.remove("selected");
+    this.taskBtn.classList.remove("disabled");
+    this.projBtn.classList.remove("disabled");
   }
 
   static getNameDiv(value) {
@@ -124,9 +157,9 @@ export default class UI {
     return notesDiv;
   }
 
-  static getDateDiv(value) {
+  static getDateDiv(date) {
     const today = new Date();
-    const dateStr = format(today, "yyyy-MM-dd");
+    const todayStr = format(today, "yyyy-MM-dd");
 
     const dateDiv = document.createElement("div");
     dateDiv.classList.add("form-input");
@@ -136,14 +169,17 @@ export default class UI {
     const dateField = document.createElement("input");
     dateField.setAttribute("type", "date");
     dateField.setAttribute("name", "date");
-    if (value) dateField.value = value;
-    else dateField.value = dateStr;
+    if (date) {
+      dateField.value = date;
+    } else {
+      dateField.value = todayStr;
+    }
     dateDiv.append(dateLabel, dateField);
 
     return dateDiv;
   }
 
-  static getProjectDiv(projects, value) {
+  static getProjectDiv(projects, projectID) {
     const projDiv = document.createElement("div");
     projDiv.classList.add("form-input");
     const projLabel = document.createElement("label");
@@ -156,9 +192,9 @@ export default class UI {
       const option = document.createElement("option");
       option.setAttribute("value", project.id);
       option.innerText = project.name;
-      if (project === value) {
+      if (project.id === projectID) {
         option.setAttribute("selected", "");
-      } else if (!value && project.isDefault) {
+      } else if (!projectID && project.isDefault) {
         option.setAttribute("selected", "");
       }
       projSelect.append(option);
@@ -234,7 +270,7 @@ export default class UI {
     }
   }
 
-  getButtonsDiv() {
+  getButtonsDiv(item) {
     const btnDiv = document.createElement("div");
     btnDiv.id = "form-btns";
     const saveBtn = document.createElement("button");
@@ -273,8 +309,32 @@ export default class UI {
         else if (isMed) prioVal = "med";
         else if (isHigh) prioVal = "high";
 
-        const newTask = new Task(nameVal, notesVal, prioVal, dateVal, projVal);
-        this.masterList.saveOrUpdate(newTask);
+        let isComplete;
+        if (item) isComplete = item.isComplete;
+        else isComplete = false;
+
+        
+        if (item) {
+          const newTask = new Task(
+            nameVal,
+            notesVal,
+            prioVal,
+            dateVal,
+            projVal,
+            item.isComplete,
+            item.id
+          );
+          this.masterList.saveOrUpdate(newTask, item);
+        } else {
+          const newTask = new Task(
+            nameVal,
+            notesVal,
+            prioVal,
+            dateVal,
+            projVal,
+          );
+          this.masterList.saveOrUpdate(newTask); 
+        }     
         this.redrawList();
 
       } else if (this.projBtn.classList.contains("selected")) {
@@ -285,14 +345,14 @@ export default class UI {
       }
 
       this.resetToggle();
-      this.createDialog.close();
-      this.createForm.replaceChildren();
+      this.dialog.close();
+      this.form.replaceChildren();
     });
 
     cancelBtn.addEventListener("click", () => {
       this.resetToggle();
-      this.createDialog.close();
-      this.createForm.replaceChildren();
+      this.dialog.close();
+      this.form.replaceChildren();
     });
 
     return btnDiv;
@@ -392,7 +452,7 @@ class TaskDiv {
     if (compareDesc(task.dueDate, today) >= 0) {
       this.date.classList.add("due");
     }
-    this.date.innerText = format(task.dueDate, "dd-MM-yyyy");
+    this.date.innerText = task.dueDate;
     dateDiv.append(this.date);
 
 
@@ -418,6 +478,7 @@ class TaskDiv {
     this.editButton = document.createElement("button");
     this.editButton.classList.add("task-edit");
     buttonDiv.append(this.editButton);
+    this.#addEditButtonListener();
 
     const editImg = document.createElement("img");
     editImg.src = editOutline;
@@ -453,6 +514,14 @@ class TaskDiv {
       const task = this.masterList.findTaskByID(this.id);
       this.masterList.delete(task);
       this.interface.redrawList();  
+    })
+  }
+
+  #addEditButtonListener() {
+    this.editButton.addEventListener("click", () => {
+      const task = this.masterList.findTaskByID(this.id);
+      this.interface.dialog.showModal();
+      this.interface.editDialog(task);
     })
   }
 }
