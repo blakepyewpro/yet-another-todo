@@ -16,12 +16,12 @@ export default class UI {
   constructor() {
     this.taskBtn = document.querySelector("button#task-btn");
     this.projBtn = document.querySelector("button#proj-btn");
-    this.dialog = document.querySelector("dialog");
-    this.form = document.querySelector("form");
+    this.createDialog = document.querySelector("dialog#creation");
+    this.createForm = document.querySelector("#create-form");
     this.listArea = document.querySelector("div#list-area");
 
     this.initButtons();
-    this.dialog.addEventListener('cancel', (event) => {
+    this.createDialog.addEventListener('cancel', (event) => {
       event.preventDefault(); // Prevents the dialog from closing
     });
 
@@ -43,7 +43,7 @@ export default class UI {
     });
 
     createBtn.addEventListener("click", () => {
-      this.dialog.showModal();
+      this.createDialog.showModal();
       this.configDialog("task");
     });
 
@@ -55,10 +55,10 @@ export default class UI {
     });
   }
 
-  configDialog(type) {
+  configDialog(type, ) {
     const nameDiv = UI.getNameDiv();
     const btnDiv = this.getButtonsDiv();
-    this.form.replaceChildren();
+    this.createForm.replaceChildren();
 
     if (type === "task") {
       const notesDiv = UI.getNotesDiv();
@@ -66,9 +66,9 @@ export default class UI {
       const dateDiv = UI.getDateDiv();
       const projDiv = UI.getProjectDiv(this.masterList.projects);
 
-      this.form.append(nameDiv, notesDiv, prioDiv, dateDiv, projDiv, btnDiv);
+      this.createForm.append(nameDiv, notesDiv, prioDiv, dateDiv, projDiv, btnDiv);
     } else if (type === "proj") {
-      this.form.append(nameDiv, btnDiv);
+      this.createForm.append(nameDiv, btnDiv);
     }
   }
 
@@ -285,14 +285,14 @@ export default class UI {
       }
 
       this.resetToggle();
-      this.dialog.close();
-      this.form.replaceChildren();
+      this.createDialog.close();
+      this.createForm.replaceChildren();
     });
 
     cancelBtn.addEventListener("click", () => {
       this.resetToggle();
-      this.dialog.close();
-      this.form.replaceChildren();
+      this.createDialog.close();
+      this.createForm.replaceChildren();
     });
 
     return btnDiv;
