@@ -305,7 +305,7 @@ export default class UI {
       for (const project of this.masterList.projects) {
         if (project.isDefault) {
           for (const task of project.tasks) {
-            const newDiv = new TaskDiv(task);
+            const newDiv = new TaskDiv(task, this.masterList, this);
             this.listArea.append(newDiv.taskDiv);
           }
         } else {
@@ -318,9 +318,10 @@ export default class UI {
   }
 }
 class TaskDiv {
-  constructor(task) {
+  constructor(task, masterList, UI) {
     this.id = task.id;
-
+    this.masterList = masterList;
+    this.interface = UI;
 
     this.taskDiv = document.createElement("div");
     this.taskDiv.classList.add("task");
@@ -344,7 +345,9 @@ class TaskDiv {
     
     this.checkbox = document.createElement("input");
     this.checkbox.setAttribute("type", "checkbox");
+    if (task.isComplete) this.checkbox.checked = true;
     taskLeft.append(this.checkbox);
+    this.#addCheckboxListener();
 
     this.title = document.createElement("span");
     this.title.classList.add("task-title");
@@ -424,10 +427,32 @@ class TaskDiv {
     this.deleteButton = document.createElement("button");
     this.deleteButton.classList.add("task-delete");
     buttonDiv.append(this.deleteButton);
+    this.#addDeleteButtonListener();
 
     const deleteImg = document.createElement("img");
     deleteImg.src = deleteOutline;
     deleteImg.alt = "delete task";
     this.deleteButton.append(deleteImg);
+  }
+
+  #addCheckboxListener() {
+    this.checkbox.addEventListener("click", () => {
+      const task = this.masterList.findTaskByID(this.id);
+      if (this.checkbox.checked) {
+        task.isComplete = true;
+        this.taskDiv.classList.add("complete");
+      } else if (!this.checkbox.checked) {
+        task.isComplete = false;
+        this.taskDiv.classList.remove("complete");
+      }
+    });
+  }
+
+  #addDeleteButtonListener() {
+    this.deleteButton.addEventListener("click", () => {
+      const task = this.masterList.findTaskByID(this.id);
+      this.masterList.delete(task);
+      this.interface.redrawList();  
+    })
   }
 }
