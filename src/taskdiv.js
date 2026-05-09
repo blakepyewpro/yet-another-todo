@@ -1,4 +1,9 @@
-class TaskDiv {
+const {compareDesc} = require("date-fns");
+
+import editOutline from "./assets/file-edit-outline.svg";
+import deleteOutline from "./assets/delete-outline.svg";
+
+export default class TaskDiv {
   constructor(task, masterList, UI) {
     this.id = task.id;
     this.masterList = masterList;
