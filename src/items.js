@@ -134,7 +134,7 @@ export class Project {
     for (const task in saveItems) {
       const newTask = new Task(
         task.name, task.notes, task.prio, 
-        task.dueDate, this.id, task.id, task.isComplete
+        task.dueDate, this.id, task.isComplete, task.id
       );
       this.tasks.push(newTask);
     }
