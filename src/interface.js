@@ -1,5 +1,5 @@
 const {format} = require("date-fns");
-import { MasterList, Task } from "./items";
+import { MasterList, Project, Task } from "./items";
 import TaskDiv from "./taskdiv";
 
 import editOutline from "./assets/file-edit-outline.svg";
@@ -337,7 +337,14 @@ export default class UI {
         const name = document.querySelector('input[name="name"]');
         const nameVal = name.value;
 
-        console.log("name: " + nameVal + "\ntype: Project");
+        if (item) {
+          const newProject = new Project(nameVal, item.isDefault, item.id);
+          this.masterList.saveOrUpdate(newProject, item);
+        } else {
+          const newProject = new Project(nameVal);
+          this.masterList.saveOrUpdate(newProject);
+        }
+        this.redrawList();
       }
 
       this.resetToggle();
