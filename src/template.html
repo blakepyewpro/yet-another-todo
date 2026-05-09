@@ -22,34 +22,23 @@
     <ul id="projects"></ul>
   </div>
   <div id="list-area">
-    <div class="task complete" data-id="uuid">
-      <div class="task-content">
-        <div class="task-header">
-          <div class="task-left">
-            <input type="checkbox">
-            <span class="task-title">Task 1</span>
+    <div class="project">
+      <div class="project-header">
+        <div class="project-left">
+          <span class="project-title">Project Name</span>
+          <button class="project-edit"><img src="assets/file-edit-outline.svg" alt="edit project"></button>
+          <button class="project-delete"><img src="assets/delete-outline.svg" alt="delete project"></button>
+        </div>
+        <div class="project-right">
+          <div class="task-counter-area">
+            <span class="task-counter">X</span><span> TASKS</span>
           </div>
-          <div class="task-center">
-            <span class="task-prio med">Medium</span>
-          </div>
-          <div class="task-right">
-            <div class="due-date">
-              <span class="date-label">DUE BY</span>
-              <span class="date due">22/05/2026</span>
-            </div>
+          <div class="complete-counter-area">
+            <span class="complete-counter">X</span><span> COMPLETE</span>
           </div>
         </div>
-        <div class="task-notes">
-          <span class="notes-label">NOTES</span>
-          <span class="notes">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent et venenatis est.
-          </span>
-        </div>
       </div>
-      <div class="task-buttons">
-        <button class="task-edit"><img src="assets/file-edit-outline.svg" alt="edit task"></button>
-        <button class="task-delete"><img src="assets/delete-outline.svg" alt="delete task"></button>
-      </div>
+      <div class="task-list"></div>
     </div>
   </div>
 </div>
