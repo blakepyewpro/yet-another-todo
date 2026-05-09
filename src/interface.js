@@ -1,7 +1,6 @@
 const {format} = require("date-fns");
-const {compareDesc} = require("date-fns");
 import { MasterList, Task } from "./items";
-import {TaskDiv} from "./taskdiv";
+import TaskDiv from "./taskdiv";
 
 import editOutline from "./assets/file-edit-outline.svg";
 import deleteOutline from "./assets/delete-outline.svg";
@@ -21,21 +20,17 @@ export default class UI {
     this.dialogHeader = document.querySelector("span#dialog-title")
     this.form = document.querySelector("form");
     this.listArea = document.querySelector("div#list-area");
+    this.menuBtn = document.querySelector("button#menu");
+    this.createBtn = document.querySelector("button#create");
 
-    this.initButtons();
+    this.masterList = new MasterList();
+    this.redrawList();
+
     this.dialog.addEventListener('cancel', (event) => {
       event.preventDefault(); // Prevents the dialog from closing
     });
 
-    this.masterList = new MasterList();
-    this.redrawList();
-  }
-
-  initButtons() {
-    const menuBtn = document.querySelector("button#menu");
-    const createBtn = document.querySelector("button#create");
-
-    menuBtn.addEventListener("click", () => {
+    this.menuBtn.addEventListener("click", () => {
       const displayArea = document.querySelector("div#display");
       if (displayArea.classList.contains("hidden")) {
         displayArea.classList.remove("hidden");
@@ -44,7 +39,7 @@ export default class UI {
       }
     });
 
-    createBtn.addEventListener("click", () => {
+    this.createBtn.addEventListener("click", () => {
       this.dialog.showModal();
       this.configDialog("task");
     });
