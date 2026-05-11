@@ -7,7 +7,7 @@ export class MasterList {
     const saveStr = Storage.load();
     if (saveStr != null && saveStr != false) {
       const save = JSON.parse(saveStr);
-      console.log("loaded save:\n" + save);
+      console.log("loaded save");
       for (const project of save.projects) {
         this.saveOrUpdate(project);
       }
@@ -61,10 +61,10 @@ export class MasterList {
     } else {
       if (item.itemType == "project") {
         const newProj = new Project(item.name, item.isDefault, item.id);
-        if (item.tasks) newProj.processSaveItems(item.items);
+        if (item.tasks.length >= 1) newProj.processSaveItems(item.tasks);
         this.projects.push(newProj);
         Storage.store(this);
-      } else if (item.itemType) {
+      } else if (item.itemType == "task") {
         const newTask = new Task(item.name, item.notes, item.prio, 
           item.dueDate, item.projectID, item.isComplete, item.id
         );
@@ -131,7 +131,7 @@ export class Project {
   }
 
   processSaveItems(saveItems) {
-    for (const task in saveItems) {
+    for (const task of saveItems) {
       const newTask = new Task(
         task.name, task.notes, task.prio, 
         task.dueDate, this.id, task.isComplete, task.id
