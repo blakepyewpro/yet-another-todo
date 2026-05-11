@@ -2,9 +2,9 @@ import editOutline from "./assets/file-edit-outline.svg";
 import deleteOutline from "./assets/delete-outline.svg";
 
 export default class ProjectDiv {
-  constructor(project, masterList, UI) {
+  constructor(project, UI) {
     this.id = project.id;
-    this.masterList = masterList;
+    this.masterList = UI.masterList;
     this.interface = UI;
 
     this.projectDiv = document.createElement("div");
@@ -102,10 +102,18 @@ export default class ProjectDiv {
   }
 
   #addEditButtonListener() {
-    //TODO
+    this.editButton.addEventListener("click", () => {
+      const project = this.masterList.findProjectByID(this.id);
+      this.interface.dialog.showModal();
+      this.interface.editDialog(project);
+    });
   }
 
   #addDeleteButtonListener() {
-    //TODO
+    this.deleteButton.addEventListener("click", () => {
+      const project = this.masterList.findProjectByID(this.id);
+      this.masterList.delete(project);
+      this.interface.redrawList();
+    });
   }
 }
