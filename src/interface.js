@@ -1,6 +1,7 @@
 const {format} = require("date-fns");
 import { MasterList, Project, Task } from "./items";
 import TaskDiv from "./taskdiv";
+import ProjectDiv from "./projectdiv";
 
 import editOutline from "./assets/file-edit-outline.svg";
 import deleteOutline from "./assets/delete-outline.svg";
@@ -24,6 +25,7 @@ export default class UI {
     this.createBtn = document.querySelector("button#create");
 
     this.masterList = new MasterList();
+    this.projectDivs = [];
     this.redrawList();
 
     this.dialog.addEventListener('cancel', (event) => {
@@ -361,6 +363,12 @@ export default class UI {
     return btnDiv;
   }
 
+  updateTaskCounters() {
+    for (const projectDiv of this.projectDivs) {
+      projectDiv.updateTaskCounter();
+    }
+  }
+
   redrawList() {
     //will need to change to use MasterList.display instead of projects
     this.listArea.replaceChildren();
@@ -368,11 +376,16 @@ export default class UI {
       for (const project of this.masterList.projects) {
         if (project.isDefault) {
           for (const task of project.tasks) {
-            const newDiv = new TaskDiv(task, this.masterList, this);
+            const newDiv = new TaskDiv(task, this);
             this.listArea.append(newDiv.taskDiv);
           }
         } else {
-          //Add project div, then add task divs, then append
+          const projectDiv = new ProjectDiv(project, this);
+          this.projectDivs.push(projectDiv);
+          this.listArea.append(projectDiv);
+          for (const task of project.tasks) {
+            const taskDiv = new TaskDiv(task, this);
+          }
         }
       }
     } else {

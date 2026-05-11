@@ -4,9 +4,9 @@ import editOutline from "./assets/file-edit-outline.svg";
 import deleteOutline from "./assets/delete-outline.svg";
 
 export default class TaskDiv {
-  constructor(task, masterList, UI) {
+  constructor(task, UI) {
     this.id = task.id;
-    this.masterList = masterList;
+    this.masterList = UI.masterList;
     this.interface = UI;
 
     this.taskDiv = document.createElement("div");
@@ -132,6 +132,7 @@ export default class TaskDiv {
         task.isComplete = false;
         this.taskDiv.classList.remove("complete");
       }
+      this.interface.updateTaskCounters();
     });
   }
 
