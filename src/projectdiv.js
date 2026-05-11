@@ -9,6 +9,7 @@ export default class ProjectDiv {
 
     this.projectDiv = document.createElement("div");
     this.projectDiv.classList.add("project");
+    this.projectDiv.setAttribute("data-id", this.id)
 
     const projectHeader = document.createElement("div");
     projectHeader.classList.add("project-header");
@@ -58,7 +59,7 @@ export default class ProjectDiv {
     taskCounterArea.append(this.taskCounter);
 
     const taskCounterLabel = document.createElement("span");
-    taskCounterLabel.innerText = " TASKS"
+    taskCounterLabel.innerText = " TASK(S)"
     taskCounterArea.append(taskCounterLabel);
 
     const completeCounterArea = document.createElement("div");
