@@ -91,13 +91,13 @@ export default class UI {
       this.projBtn.classList.remove("selected");
       const notesDiv = UI.getNotesDiv(item.notes);
       const prioDiv = UI.getPrioDiv(item.prio);
-      const dateDiv = UI.getDateDiv(item.date);
+      const dateDiv = UI.getDateDiv(item.dueDate);
       const projDiv = UI.getProjectDiv(this.masterList.projects, item.projectID);
       this.form.append(nameDiv, notesDiv, prioDiv, dateDiv, projDiv, btnDiv);
-    } else if (item.itemType === "proj") {
+    } else if (item.itemType === "project") {
       this.taskBtn.classList.remove("selected");
       this.projBtn.classList.add("selected");
-      this.form.append(nameDiv, buttonDiv);
+      this.form.append(nameDiv, btnDiv);
     }
   }
 
@@ -372,6 +372,7 @@ export default class UI {
   redrawList() {
     //will need to change to use MasterList.display instead of projects
     this.listArea.replaceChildren();
+    this.projectDivs = [];
     if (!this.masterList.isEmpty()) {
       for (const project of this.masterList.projects) {
         if (project.isDefault) {
@@ -380,11 +381,14 @@ export default class UI {
             this.listArea.append(newDiv.taskDiv);
           }
         } else {
-          const projectDiv = new ProjectDiv(project, this);
-          this.projectDivs.push(projectDiv);
-          this.listArea.append(projectDiv);
-          for (const task of project.tasks) {
-            const taskDiv = new TaskDiv(task, this);
+          if (project.tasks.length >= 1) {
+            const newDiv = new ProjectDiv(project, this);
+            this.projectDivs.push(newDiv);
+            this.listArea.append(newDiv.projectDiv);
+            for (const task of project.tasks) {
+              const NewTaskDiv = new TaskDiv(task, this);
+              newDiv.taskList.append(NewTaskDiv.taskDiv);
+            }
           }
         }
       }
