@@ -182,6 +182,7 @@ div#list-area {
   
     display: flex;
     flex-direction: column;
+    gap: 0.5em;
 }
 
 div#list-area.empty {
@@ -319,7 +320,7 @@ textarea {
   gap: 0.5rem;
 }
 
-div.task {
+div.task, div.project {
   padding: 0.5em;
   
   background-color: white;
@@ -330,6 +331,11 @@ div.task {
   gap: 1em;
 }
 
+div.project {
+  flex-direction: column;
+  gap: 0;
+}
+
 div.task-content {
   display: flex;
   flex-direction: column;
@@ -338,16 +344,29 @@ div.task-content {
   flex-grow: 1;
 }
 
-div.task-header {
+div.task-header, div.project-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  flex-grow: 1;
 }
 
-div.task-left, div.task-center, div.task-right {
+div.project-header {
+  padding-bottom: 0.25em;
+}
+
+div.task-left, div.task-center, div.task-right, div.header-left {
   display: flex;
   align-items: center;
   gap: 0.5em;
+}
+
+div.header-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 input[type="checkbox"] {
@@ -360,7 +379,13 @@ input[type="checkbox"] {
   font-weight: bold;
 }
 
-.task.complete span.task-title {
+.project-name {
+  font-size: 1.75em;
+  color: black;
+  font-weight: bold;
+}
+
+.task.complete span.task-title, .project.complete span.project-name {
   text-decoration: line-through;
   color: #ababab;
 }
@@ -393,6 +418,11 @@ input[type="checkbox"] {
   padding-right: 0.5em;
 }
 
+.header-right span{
+  color: #ababab;
+  font-size: 0.75em;
+}
+
 .task:not(.complete) .date.due {
     color: #cc3232;
 }
@@ -403,6 +433,15 @@ input[type="checkbox"] {
   gap: 0.5em;
 }
 
-.task-buttons button img {
+.task-buttons button img, .header-left button img {
   width: 2ch;
+}
+
+div.task-list div.task {
+  border: none;
+  border-radius: 0;
+}
+
+div.task-list div.task {
+  border-top: 2px solid #e7e7e7;
 }
