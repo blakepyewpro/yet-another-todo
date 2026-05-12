@@ -13,6 +13,7 @@ export default class Menu {
   }
 
   makeProjectList() {
+    this.projectsList.replaceChildren();
     for (const project of this.masterList.projects) {
       if (!project.isDefault) {
         const li = document.createElement("li");
