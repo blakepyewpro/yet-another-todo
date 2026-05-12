@@ -3,7 +3,7 @@ import UI from "./interface.js";
 import Storage from "./storage.js"
 import { MasterList, Project, Task } from "./items.js";
 
-Storage.clear();
+// Storage.clear();
 
 const myUI = new UI();
 

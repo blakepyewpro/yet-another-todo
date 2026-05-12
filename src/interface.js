@@ -2,6 +2,7 @@ const {format} = require("date-fns");
 import { MasterList, Project, Task } from "./items";
 import TaskDiv from "./taskdiv";
 import ProjectDiv from "./projectdiv";
+import Menu from "./menu";
 
 import editOutline from "./assets/file-edit-outline.svg";
 import deleteOutline from "./assets/delete-outline.svg";
@@ -25,6 +26,7 @@ export default class UI {
     this.createBtn = document.querySelector("button#create");
 
     this.masterList = new MasterList();
+    this.menu = new Menu(this.masterList, this);
     this.projectDivs = [];
     this.redrawList();
 
