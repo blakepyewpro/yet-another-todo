@@ -1,8 +1,9 @@
-import Storage from "./storage.js"
+const { compareDesc } = require("date-fns");
+import Storage from "./storage.js";
 export class MasterList {
   constructor() {
     this.projects = [];
-    this.display = [];
+    this.display = this.projects;
 
     const saveStr = Storage.load();
     if (saveStr != null && saveStr != false) {
@@ -12,7 +13,7 @@ export class MasterList {
         this.saveOrUpdate(project);
       }
     } else {
-      console.log("No save data in localStorage")
+      console.log("No save data in localStorage");
       //TODO: Handle intial / default state
       const defaultProject = new Project("None", true);
       this.saveOrUpdate(defaultProject);
@@ -23,7 +24,7 @@ export class MasterList {
     if (originalItem) {
       const findOriginalByID = (element) => {
         return element.id == originalItem.id;
-      }
+      };
 
       if (originalItem.itemType == "project") {
         const project = this.projects.find(findOriginalByID);
@@ -32,24 +33,33 @@ export class MasterList {
       } else if (originalItem.itemType == "task") {
         const findProjectByID = (element) => {
           return element.id == originalItem.projectID;
-        }
+        };
         const origProjIndex = this.projects.findIndex(findProjectByID);
 
         if (item.projectID != originalItem.projectID) {
-          const origTaskIndex = this.projects[origProjIndex].tasks.findIndex(findOriginalByID);
+          const origTaskIndex =
+            this.projects[origProjIndex].tasks.findIndex(findOriginalByID);
           this.projects[origProjIndex].tasks.splice(origTaskIndex, 1);
-          
-          const newTask = new Task(item.name, item.notes, item.prio, 
-            item.dueDate, item.projectID, item.isComplete, item.id);
-          
+
+          const newTask = new Task(
+            item.name,
+            item.notes,
+            item.prio,
+            item.dueDate,
+            item.projectID,
+            item.isComplete,
+            item.id,
+          );
+
           const findNewProjectByID = (element) => {
             return element.id == item.projectID;
-          }
+          };
           const newProjIndex = this.projects.findIndex(findNewProjectByID);
           this.projects[newProjIndex].tasks.push(newTask);
           Storage.store(this);
         } else if (item.project == originalItem.project) {
-          const origTask = this.projects[origProjIndex].tasks.find(findOriginalByID);
+          const origTask =
+            this.projects[origProjIndex].tasks.find(findOriginalByID);
           origTask.name = item.name;
           origTask.notes = item.notes;
           origTask.prio = item.prio;
@@ -65,8 +75,14 @@ export class MasterList {
         this.projects.push(newProj);
         Storage.store(this);
       } else if (item.itemType == "task") {
-        const newTask = new Task(item.name, item.notes, item.prio, 
-          item.dueDate, item.projectID, item.isComplete, item.id
+        const newTask = new Task(
+          item.name,
+          item.notes,
+          item.prio,
+          item.dueDate,
+          item.projectID,
+          item.isComplete,
+          item.id,
         );
         const findProject = (element) => element.id == newTask.projectID;
         const projIndex = this.projects.findIndex(findProject);
@@ -81,7 +97,7 @@ export class MasterList {
     if (item.itemType == "project") {
       if (item.name == "None" || item.isDefault == true) return false;
       const projectIndex = this.projects.findIndex(findByID);
-      this.projects.splice(projectIndex, 1)
+      this.projects.splice(projectIndex, 1);
       Storage.store(this);
       return true;
     } else if (item.itemType == "task") {
@@ -118,6 +134,32 @@ export class MasterList {
     }
     return false;
   }
+
+  filterByProject(id) {
+    this.display = this.projects.filter((project) => {
+      if (project.id == id) return true;
+    });
+    console.log("display list:\n" + this.display);
+  }
+
+  filterByDueDate(filter) {
+    const date = new Date();
+    this.display = this.projects;
+    for (const project of this.display) {
+        if (filter == "week") {
+          date.setDate(date.getDate() + 7);
+        }
+        project.tasks = project.tasks.filter((task) => {
+          const result = compareDesc(task.dueDate, date);
+          if (result >= 0) return true;
+          else return false;
+        });
+      }
+    }
+
+  resetFilter() {
+    this.display = this.projects;
+  }
 }
 
 export class Project {
@@ -133,8 +175,13 @@ export class Project {
   processSaveItems(saveItems) {
     for (const task of saveItems) {
       const newTask = new Task(
-        task.name, task.notes, task.prio, 
-        task.dueDate, this.id, task.isComplete, task.id
+        task.name,
+        task.notes,
+        task.prio,
+        task.dueDate,
+        this.id,
+        task.isComplete,
+        task.id,
       );
       this.tasks.push(newTask);
     }
