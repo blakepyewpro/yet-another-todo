@@ -10,7 +10,7 @@ export default class Menu {
 
     this.filterMode = "default";
     this.filterID = null;
-    this.makeProjectList;
+    this.makeProjectList();
 
     this.allTasks.addEventListener("click", () => {
       this.filterMode = "default";
@@ -46,7 +46,7 @@ export default class Menu {
           this.filterMode = "project";
           this.filterID = project.id;
           this.masterList.filterByProject(project.id);
-          this.interface.redrawList;
+          this.interface.redrawList();
         });
       }
     }

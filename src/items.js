@@ -143,6 +143,8 @@ export class MasterList {
   }
 
   filterByDueDate(filter) {
+    //TODO: this.display should create a new array of projects
+    //to be displayed instead of calling .filter directly on project.tasks
     const date = new Date();
     this.display = this.projects;
     for (const project of this.display) {

@@ -348,6 +348,7 @@ export default class UI {
           const newProject = new Project(nameVal);
           this.masterList.saveOrUpdate(newProject);
         }
+        this.menu.makeProjectList();
         this.redrawList();
       }
 
@@ -375,8 +376,9 @@ export default class UI {
     //will need to change to use MasterList.display instead of projects
     this.listArea.replaceChildren();
     this.projectDivs = [];
+    this.menu.recalculateFilters();
     if (!this.masterList.isEmpty()) {
-      for (const project of this.masterList.projects) {
+      for (const project of this.masterList.display) {
         if (project.isDefault) {
           for (const task of project.tasks) {
             const newDiv = new TaskDiv(task, this);
