@@ -170,6 +170,19 @@ export class MasterList {
   resetFilter() {
     this.display = this.projects;
   }
+
+  saveData() {
+    Storage.store(this);
+  }
+
+  resetData() {
+    Storage.clear();
+    this.projects = [];
+    this.display = this.projects;
+    const defaultProject = new Project("None", true);
+    this.saveOrUpdate(defaultProject);
+    Storage.store(this);
+  }
 }
 
 export class Project {

@@ -127,9 +127,11 @@ export default class TaskDiv {
       const task = this.masterList.findTaskByID(this.id);
       if (this.checkbox.checked) {
         task.isComplete = true;
+        this.masterList.saveData();
         this.taskDiv.classList.add("complete");
       } else if (!this.checkbox.checked) {
         task.isComplete = false;
+        this.masterList.saveData();
         this.taskDiv.classList.remove("complete");
       }
       this.interface.updateTaskCounters();
