@@ -7,6 +7,10 @@ import { MasterList, Project, Task } from "./items.js";
 
 const myUI = new UI();
 
+window.addEventListener("load", () => {
+  document.body.classList.remove("preload");
+});
+
 // const myList = new MasterList();
 
 // let testProject1 = new Project("None", true);
