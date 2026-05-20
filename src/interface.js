@@ -7,13 +7,6 @@ import Menu from "./menu";
 import editOutline from "./assets/file-edit-outline.svg";
 import deleteOutline from "./assets/delete-outline.svg";
 
-//TODO: Add empty state handling to list-area
-//  <div id="list-area" class="empty">
-//     <div id="placeholder">
-//       <span id="ph-title">Nothing to do!</span>
-//       <span id="ph-body">Click "Create" to get started</span>
-//     </div>
-//   </div>
 export default class UI {
   constructor() {
     this.taskBtn = document.querySelector("button#task-btn");
@@ -373,11 +366,11 @@ export default class UI {
   }
 
   redrawList() {
-    //will need to change to use MasterList.display instead of projects
     this.listArea.replaceChildren();
     this.projectDivs = [];
     this.menu.recalculateFilters();
     if (!this.masterList.isEmpty()) {
+      this.listArea.classList.remove("empty");
       for (const project of this.masterList.display) {
         if (project.isDefault) {
           for (const task of project.tasks) {
@@ -397,7 +390,20 @@ export default class UI {
         }
       }
     } else {
-      //Handle empty state
+      this.listArea.classList.add("empty");
+      const placeholder = document.createElement("div");
+      placeholder.id = "placeholder";
+      this.listArea.append(placeholder);
+
+      const title = document.createElement("span");
+      title.id = "ph-title";
+      title.textContent = "Nothing to do!"
+      placeholder.append(title);
+
+      const body = document.createElement("span");
+      body.id = "ph-body";
+      body.textContent = 'Click "Create" to get started';
+      placeholder.append(body);
     }
   }
 }
