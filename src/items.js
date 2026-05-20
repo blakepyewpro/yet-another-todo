@@ -1,4 +1,4 @@
-const { compareDesc } = require("date-fns");
+const { compareDesc, endOfDay, parseISO } = require("date-fns");
 import Storage from "./storage.js";
 export class MasterList {
   constructor() {
@@ -146,17 +146,25 @@ export class MasterList {
     //TODO: this.display should create a new array of projects
     //to be displayed instead of calling .filter directly on project.tasks
     const date = new Date();
-    this.display = this.projects;
-    for (const project of this.display) {
-        if (filter == "week") {
-          date.setDate(date.getDate() + 7);
+    if (filter == "week") {
+      date.setDate(date.getDate() + 7);
+    }
+    this.display = [];
+    for (const project of this.projects) {
+      const dupeProject = new Project(
+        project.name, project.isDefault, project.id
+      );
+      this.display.push(dupeProject);
+      for (const task of project.tasks) {
+        if (compareDesc(parseISO(task.dueDate), endOfDay(date)) >= 0) {
+          const dupeTask = new Task(
+            task.name, task.notes, task.prio, task.dueDate,
+            task.projectID, task.isComplete, task.id
+          );
+          dupeProject.tasks.push(dupeTask);
         }
-        project.tasks = project.tasks.filter((task) => {
-          const result = compareDesc(task.dueDate, date);
-          if (result >= 0) return true;
-          else return false;
-        });
       }
+    }
     }
 
   resetFilter() {
